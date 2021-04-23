@@ -11,10 +11,17 @@ const PORT = process.env.PORT || 3000;
 
 
 
+//todo make all file paths
+const indexHtmlPath = path.join(__dirname, 'public', 'index.html');
+
+
+//todo Return NotesS
 app.get('/api/notes', (req, res) => {
 
 });
 
+// makes all other routes route to index page
+app.get('*', (req, res) => res.sendFile( indexHtmlPath ));
 
 app.post('/api/notes', (req, res) => {
 
