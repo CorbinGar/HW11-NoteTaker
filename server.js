@@ -31,31 +31,8 @@ app.get('/api/notes', (req, res) => {
 app.get('*', (req, res) => res.sendFile( indexHtmlPath ));
 
 app.post('/api/notes', (req, res) => {
-   const { title, text } = req.body;
 
-    if (!title || !text) {
-        res.status(400);
-        res.send('Either Title or Text feild is empty');
-        return;
-    }
 
-    const newNote = {
-        title,
-        text,
-        id: uniqid()
-    };
-
-    const notesText = fs.readFileSync(dbFilePath);
-    const notes = JSON.parse(notesText);
-    notes.push(newNote);
-    const updatedNotes = JSON.stringify(notes, null, '\t');
-    try {
-        fs.writeFileSync(dbFilePath, updatedNotes);
-    } catch (error) {
-        console.log(error);
-    }
-    console.log('Noted');
-    res.json(newNote);
 });
 
 app.delete('/api/notes/:id', (req, res) => {
