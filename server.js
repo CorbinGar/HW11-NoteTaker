@@ -10,16 +10,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 
-
-// todo make all file paths
+// make all file paths
 const dbPath = path.join(__dirname, 'db', 'db.json');
 const notesHtmlPath = path.join(__dirname, 'public', 'notes.html');
 const indexHtmlPath = path.join(__dirname, 'public', 'index.html');
 const staticPath = path.join(__dirname, 'public');
 
 
+// Wee data parsing
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+
 // give assets
 app.use(express.static(staticPath));
+
+// sends user to notes page
+app.get('/notes', (req, res) => res.sendFile(notesHtmlPath));
 
 // todo Return Notes
 app.get('/api/notes', (req, res) => {
@@ -59,7 +66,20 @@ app.post('/api/notes', (req, res) => {
 });
 
 app.delete('/api/notes/:id', (req, res) => {
-
+    const notesText = fs.readFileSync(dbPath);
+    const notes = JSON.parse(notesText);
+    const newdb = notes.filter(function (note) {
+        const noteId = req.params.id;
+        return note.id != noteId;
+    });
+    const updatedNotes = JSON.stringify(newdb, null, '\t');
+    try {
+        fs.writeFileSync(dbPath, updatedNotes);
+    } catch (error) {
+        console.log(error);
+    }
+    console.log('Note deleted!');
+    res.send('Note deleted!');
 });
 
 
